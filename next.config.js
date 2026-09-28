@@ -35,18 +35,6 @@ const nextConfig = {
   experimental: {
     ...(process.env.VERCEL ? {} : { workerThreads: false, cpus: 1 }),
     serverComponentsExternalPackages: ['mongoose', 'bcryptjs'],
-    optimizePackageImports: [
-      'lucide-react',
-      'date-fns',
-      'framer-motion',
-      '@radix-ui/react-dialog',
-      '@radix-ui/react-dropdown-menu',
-      '@radix-ui/react-select',
-      '@radix-ui/react-tabs',
-      '@radix-ui/react-avatar',
-      '@radix-ui/react-sheet',
-      'recharts',
-    ],
   },
   eslint: {
     ignoreDuringBuilds: true,
