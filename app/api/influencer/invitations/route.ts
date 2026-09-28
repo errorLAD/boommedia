@@ -1,0 +1,9 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { auth } from '@/auth'
+import connectDB from '@/lib/db/mongoose'
+import CampaignInvitation from '@/lib/db/models/CampaignInvitation'
+import Notification from '@/lib/db/models/Notification'
+
+export async function GET() { const session = await auth(); if (!session?.user?.id || (session.user as any).role !== 'INFLUENCER') return NextResponse.json({ error: 'Unauthorized' }, { status: 403 }); await connectDB(); const data = await CampaignInvitation.find({ inviteeId: session.user.id, inviteeType: 'INFLUENCER' }).populate('campaignId', 'name description deliverables deadline budget status').sort({ createdAt: -1 }).lean(); return NextResponse.json({ success: true, data }) }
+export async function PATCH(request: NextRequest) { const session = await auth(); if (!session?.user?.id || (session.user as any).role !== 'INFLUENCER') return NextResponse.json({ error: 'Unauthorized' }, { status: 403 }); const parsed = z.object({ id: z.string(), status: z.enum(['ACCEPTED', 'REJECTED']) }).safeParse(await request.json()); if (!parsed.success) return NextResponse.json({ error: 'Invalid request' }, { status: 400 }); await connectDB(); const invitation = await CampaignInvitation.findOneAndUpdate({ _id: parsed.data.id, inviteeId: session.user.id, inviteeType: 'INFLUENCER', status: 'PENDING' }, { status: parsed.data.status }, { new: true }).populate('campaignId', 'name'); if (!invitation) return NextResponse.json({ error: 'Invitation is no longer available.' }, { status: 404 }); await Notification.create({ userId: session.user.id, type: 'SYSTEM', title: `Invitation ${parsed.data.status === 'ACCEPTED' ? 'accepted' : 'declined'}`, body: `Your response for ${(invitation.campaignId as any)?.name || 'the campaign'} has been saved.`, isRead: false, actionUrl: '/influencer/invitations' }); return NextResponse.json({ success: true, data: invitation }) }
