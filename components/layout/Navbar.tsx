@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useSession, signOut } from 'next-auth/react'
 import {
-  Sparkles,
   Menu,
-  X,
   ChevronDown,
   User,
   LogOut,
@@ -77,17 +76,15 @@ export function Navbar() {
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2.5 group">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black text-white shadow-sm transition-transform duration-300 group-hover:scale-105">
-            <Sparkles className="h-4 w-4 text-white" />
-          </div>
-          <div className="flex items-center text-sm font-medium text-black tracking-tight">
-            <span className="font-bold text-black text-base sm:text-sm mr-1">Boom<span className="text-primary font-extrabold">Media</span></span>
-            <span className="hidden sm:inline-flex items-center">
-              <span className="text-neutral-400 mx-1.5 font-light">/</span>
-              <span>hey@boommedia.in</span>
-            </span>
-          </div>
+        <Link href="/" className="flex items-center group">
+          <Image
+            src="/images/logo.png"
+            alt="BoomMedia"
+            width={187}
+            height={28}
+            priority
+            className="h-[25px] sm:h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -251,9 +248,16 @@ export function Navbar() {
             <SheetContent side="right" className="w-[310px] p-6 flex flex-col justify-between overflow-y-auto max-h-screen">
               <div>
                 <SheetHeader className="mb-6 text-left">
-                  <SheetTitle className="flex items-center space-x-2">
-                    <Sparkles className="h-5 w-5 text-primary" />
-                    <span>Boom<span className="text-primary font-extrabold">Media</span></span>
+                  <SheetTitle className="flex items-center">
+                    <Link href="/" onClick={() => setMobileOpen(false)} className="inline-block">
+                      <Image
+                        src="/images/logo.png"
+                        alt="BoomMedia"
+                        width={160}
+                        height={24}
+                        className="h-6 sm:h-[25px] w-auto object-contain"
+                      />
+                    </Link>
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col space-y-1.5">
